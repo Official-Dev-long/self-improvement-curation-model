@@ -1,0 +1,102 @@
+=== Chunk 1 ===
+Source: ./docs/《GINA_2024哮喘防治指南》治疗药物更新要点.pdf
+Page: 1
+--------------------------------------------------
+·12·
+Pract J Cardiac Cereb Pneum Vasc Dis　August 2024，Vol.32　No.8　http://www.syxnf.net
+［14］LI M S，ZHENG H，HAN Y，et al.LncRNA Snhg1-driven self-
+reinforcing regulatory network promoted cardiac regeneration and 
+repair after myocardial infarction［J］.Theranostics，2021，11
+（19）：9397-9414.DOI：10.7150/thno.57037.
+［15］ZHANG M，LIU H Y，HAN Y L，et al.Silence of lncRNA XIST 
+represses myocardial cell apoptosis in rats with acute myocardial 
+infarction through regulating miR-449［J］.Eur Rev Med 
+Pharmacol Sci，2019，23（19）：8566-8572.DOI：10.26355/
+eurrev_201910_19172.
+［16］MO L，JIANG H B，TIAN G R，et al.The proliferation and 
+migration of atherosclerosis-related HVSMCs were inhibited by 
+downregulation of lncRNA XIST via regulation of the miR-761/
+BMP9 axis［J］.Kaohsiung J Med Sci，2022，38（1）：18-29.
+DOI：10.1002/kjm2.12456.
+［17］WANG Y H，LIU Y F，FEI A K，et al.LncRNA XIST facilitates 
+hypoxia-induced myocardial cell injury through targeting miR-
+191-5p/TRAF3 axis［J］.Mol Cell Biochem，2022，477（6）：
+
+=== Chunk 2 ===
+Source: ./docs/《GINA_2024哮喘防治指南》治疗药物更新要点.pdf
+Page: 1
+--------------------------------------------------
+DOI：10.1002/kjm2.12456.
+［17］WANG Y H，LIU Y F，FEI A K，et al.LncRNA XIST facilitates 
+hypoxia-induced myocardial cell injury through targeting miR-
+191-5p/TRAF3 axis［J］.Mol Cell Biochem，2022，477（6）：
+1697-1707.DOI：10.1007/s11010-022-04385-5.
+［18］刘英华，王玉霞，卢海英，等.急性冠脉综合征患者血清
+LncRNA XIST和miR-330-3p水平表达与心脏自主神经功能的相
+关性研究［J］.现代检验医学杂志，2022，37（4）：64-68，
+204.DOI：10.3969/j.issn.1671-7414.2022.04.013.
+［19］GONG J，DOU L Q，ZHOU Y.Positive feedback loop of lncRNA 
+SNHG1/miR-16-5p/GATA4 in the regulation of hypoxia/
+reoxygenation-induced cardiomyocyte injury［J］.Mol Med Rep，
+2022，25（1）：28.DOI：10.3892/mmr.2021.12544.
+［20］ZHAN J F，YIN Q L，ZHAO P，et al.Role and mechanism of 
+the lncRNA SNHG1/miR-450b-5p/IGF1 axis in the regulation 
+of myocardial ischemia reperfusion injury［J］.Mol Med Rep，
+2022，25（5）：176.DOI：10.3892/mmr.2022.12692.
+［21］ZHU W，LUO L，YE G N，et al.Potential diagnostic value of 
+N1LR and SNHG1 in acute myocardial infarction［J］.BMC Med 
+Genomics，2023，16（1）：71.DOI：10.1186/s12920-023-
+01501-2.
+
+=== Chunk 3 ===
+Source: ./docs/《GINA_2024哮喘防治指南》治疗药物更新要点.pdf
+Page: 1
+--------------------------------------------------
+［21］ZHU W，LUO L，YE G N，et al.Potential diagnostic value of 
+N1LR and SNHG1 in acute myocardial infarction［J］.BMC Med 
+Genomics，2023，16（1）：71.DOI：10.1186/s12920-023-
+01501-2.
+［22］YAN S M，LI H，SHU Q，et al.LncRNA SNHG1 exerts a 
+protective role in cardiomyocytes hypertrophy via targeting miR-
+15a-5p/HMGA1 axis［J］.Cell Biol Int，2020，44（4）：1009-
+1019.DOI：10.1002/cbin.11298.
+［23］LUO S C，HUANG X Y，LIU S L，et al.Long non-coding RNA 
+small nucleolar RNA host gene 1 alleviates sepsis-associated 
+myocardial injury by modulating the miR-181a-5p/XIAP axis in 
+vitro［J］.Ann Clin Lab Sci，2021，51（2）：231-240.
+（收稿日期：2024-03-29；修回日期：2024-07-17）
+（本文编辑：谢武英）
+·指南·标准·共识·
+《GINA 2024 哮喘防治指南》治疗药物更新要点
+作为全球哮喘诊疗领域的重要指导性文件，《GINA 2024哮喘防治指南》于2024年5月重磅发布，现将该指南中哮喘不同阶
+段治疗药物和剂量的更新要点汇总如下。
+★指南建议，相同的福莫特罗单日最大总剂量（72 μg定量剂量）也适用于应用倍氯米松-福莫特罗的哮喘治疗与管理评估
+工具（MART）处方的成年人和青少年，即单日最多吸入12次。对于应用布地奈德-福莫特罗MART处方的6～11岁儿童，单日福
+莫特罗的最大推荐总剂量〔含吸入糖皮质激素（ICS）〕为48 μg（36 μg定量剂量）。大多数患者每天需要的剂量远少于推荐
+的最大剂量。
+
+=== Chunk 4 ===
+Source: ./docs/《GINA_2024哮喘防治指南》治疗药物更新要点.pdf
+Page: 1
+--------------------------------------------------
+★指南建议，相同的福莫特罗单日最大总剂量（72 μg定量剂量）也适用于应用倍氯米松-福莫特罗的哮喘治疗与管理评估
+工具（MART）处方的成年人和青少年，即单日最多吸入12次。对于应用布地奈德-福莫特罗MART处方的6～11岁儿童，单日福
+莫特罗的最大推荐总剂量〔含吸入糖皮质激素（ICS）〕为48 μg（36 μg定量剂量）。大多数患者每天需要的剂量远少于推荐
+的最大剂量。
+★指南先前建议，不推荐ICS-福莫特罗作为ICS和长效β2受体激动剂（LABA）联合非LABA进行维持治疗患者的缓解剂，
+可能与不良事件增加相关。
+★指南提及了孟鲁司特的不良反应，包括神经、精神不良事件，如新发的梦魇和行为问题，甚至在某些情况下可能出现自
+杀想法。
+★指南中凡是建议将高剂量ICS作为成年人和青少年的一种治疗选择的地方，均强调了这只是短期使用，如3～6个月，以最
+大限度减少不良反应发生的可能。
+★指南引用的亚组分析表明，需要口服糖皮质激素（OCS）与三联疗法（ICS＋LABA＋长效抗胆碱能拮抗剂）降低病情恶
+化情况主要见于前1年有哮喘加重史的患者。
+★指南更新了针对2型炎症治疗有良好反应的哮喘患者减少哮喘治疗的建议，应优先减少和停止维持OCS治疗。但针对严重
+哮喘患者，不应停止ICS-福莫特罗维持治疗。
+★指南一直强调，各种ICS的低、中、高剂量可单独使用或与LABA联合使用，但这并不意味着药物效力相等。如将患者从
+一种ICS的“中”剂量切换到另一种ICS的“中”剂量，这可能代表效力的降低（或增加），患者哮喘可能变得不稳定（或可能
+面临更高的不良反应风险）。
+★指南更新了部分过敏原免疫疗法，即对严重哮喘患者，过敏原免疫疗法可能被认为是一种附加治疗，仅在哮喘症状和恶
+化被控制后才采用。
+（来源：https://ginasthma.org/2024-report/）
+
