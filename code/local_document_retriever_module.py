@@ -1,12 +1,18 @@
 from keyword_extractor import KeywordExtractor 
+from config import Config
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
+#from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
+from langchain_core.embeddings import Embeddings  # Dummy base class
+
+import faiss
 from openai import OpenAI
-from config import Config
+
 import fitz  # PyMuPDF
 import glob
+import numpy as np
 
 import os
 os.environ["OPENAI_API_KEY"] = "sk-OBVaImxdTQNZdZbZsiAhlMwmvkvoWSO082HzOYuixVHRCKsE"
@@ -14,34 +20,31 @@ os.environ["OPENAI_BASE_URL"] = "https://svip.xty.app/v1"
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 
-# deal with ssl error when calling OpenAIEmbeddings
-# 专门处理连接公司的ds，不检验ssl
-import httpx #chatopenai用的是httpx
-import ssl
-# 自定义SSL上下文，禁用DH密钥检查
-# ssl_ctx = ssl.create_default_context()
-# ssl_ctx.check_hostname = False #原生request接口内容
-# ssl_ctx.verify_mode = 0 #原生request接口内容
-# ssl_ctx.set_ciphers('DEFAULT@SECLEVEL=1')  # 降低安全级别以允许较小的DH密钥
-# 创建自定义的httpx.Client实例并传入SSL上下文
-# http_client = httpx.Client(verify=ssl_ctx)
+class DummyEmbedding(Embeddings):
+    def embed_documents(self, texts):
+        return []
+    def embed_query(self, text):
+        return []
 
 class LocalDocumentRetrieverModule:
     
     def __init__(self):
-        # self._configure_ssl()
         self.vectorstore = self._initialize_vector_db()
         self.retriever = self.vectorstore.as_retriever(search_kwargs={'k': Config.LOCAL_DOCS_SEARCH_MAX_RESULTS})
         self.keyword_extractor = KeywordExtractor()
 
-    """
-    def _configure_ssl(self):
-        ssl_ctx = ssl.create_default_context()
-        ssl_ctx.check_hostname = False
-        ssl_ctx.verify_mode = ssl.CERT_NONE
-        ssl_ctx.set_ciphers('DEFAULT@SECLEVEL=1')
-        self.http_client = httpx.Client(verify=ssl_ctx)
-    """
+    def _get_embedding(self, text: str) -> list:
+        client = OpenAI(
+            api_key = "sk-OBVaImxdTQNZdZbZsiAhlMwmvkvoWSO082HzOYuixVHRCKsE",
+            base_url = "https://svip.xty.app/v1"
+        )
+
+        res = client.embeddings.create(
+            input=text,
+            model="text-embedding-ada-002"
+        )
+
+        return res.data[0].embedding
 
     def _load_pdfs_from_directory(self):
         """Custom PDF loader using PyMuPDF with error handling"""
@@ -88,9 +91,24 @@ class LocalDocumentRetrieverModule:
                 f.write("-" * 50 + "\n")
                 f.write(chunk.page_content + "\n\n")
 
-        embeddings = OpenAIEmbeddings()
+        texts = [doc.page_content for doc in splits]
+        metadatas = [doc.metadata for doc in splits]
 
-        return FAISS.from_documents(splits, embeddings)
+        # Embed all texts
+        embeddings = [self._get_embedding(text) for text in texts]
+
+        # Use DummyEmbedding as required by FAISS even if not used
+        dummy_embedding = DummyEmbedding()
+
+        text_embeddings = list(zip(texts, embeddings))
+
+        # Build FAISS index
+        index = FAISS.from_embeddings(text_embeddings=text_embeddings, 
+                                      embedding=dummy_embedding,
+                                      metadatas=metadatas
+        )
+
+        return index
     
     def retrieve_docs(self, query: str) -> list:
         # keywords = self.keyword_extractor.extract_keywords(query)
@@ -98,4 +116,6 @@ class LocalDocumentRetrieverModule:
 
         # retrieve_query = " ".join(keywords)
 
-        return self.retriever.invoke(query)
+        query_embedding = self._get_embedding(query)
+
+        return self.vectorstore.similarity_search_by_vector(query_embedding, k=Config.LOCAL_DOCS_SEARCH_MAX_RESULTS)

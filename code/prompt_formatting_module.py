@@ -1,4 +1,4 @@
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import PromptTemplate
 from typing import List
 from datetime import date
 
@@ -46,8 +46,9 @@ class PromptFormatter:
         # several cautions are referred from official prompt of provided by deepseek
         # https://github.com/deepseek-ai/DeepSeek-R1/pull/399/files
         
-        prompt = ChatPromptTemplate.from_template(template)
-        return prompt.format(
+        prompt_template = PromptTemplate.from_template(template)
+
+        return prompt_template.format(
             query=query,
             local_context=formatted_local_context,
             cur_date=date.today()

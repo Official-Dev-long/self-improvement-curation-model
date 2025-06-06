@@ -1,4 +1,4 @@
-from langchain_openai import ChatOpenAI
+import openai
 from local_document_retriever_module import LocalDocumentRetrieverModule
 #from online_search_retriever_module import OnlineSearchRetrieverModule
 from prompt_formatting_module import PromptFormatter
@@ -6,8 +6,7 @@ from config import Config
 import json
 
 import os
-os.environ["OPENAI_API_KEY"] = "sk-OBVaImxdTQNZdZbZsiAhlMwmvkvoWSO082HzOYuixVHRCKsE"
-os.environ["OPENAI_BASE_URL"] = "https://svip.xty.app"
+import traceback
 
 # decode the unicode escape characters from bocha api response
 # import sys
@@ -19,8 +18,10 @@ class RAGSystem:
     def __init__(self):
         self.local_retriever = LocalDocumentRetrieverModule()
         #self.web_retriever = OnlineSearchRetrieverModuleBocha()
-        self.llm = ChatOpenAI(model=Config.LLM_MODEL)
-        self.print_width = 80  
+        self.llm = openai.OpenAI(
+            api_key=os.environ.get("OPENAI_API_KEY", "sk-OBVaImxdTQNZdZbZsiAhlMwmvkvoWSO082HzOYuixVHRCKsE"),
+            base_url=os.environ.get("OPENAI_BASE_URL", "https://svip.xty.app")
+        )
 
     def process_query(self, query: str) -> str:
         local_docs = self.local_retriever.retrieve_docs(query)
@@ -41,28 +42,36 @@ class RAGSystem:
             local_context=[d.page_content for d in local_docs],
             # web_context=web_results
         )
+        
+        completion = self.llm.chat.completions.create(
+            model=Config.LLM_MODEL,
+            messages=[
+                {"role": "system", "content": "You are a helpful medical assistant."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        
+        #print(completion)
 
-        response = self.llm.invoke(prompt)
-
-        return response.content
+        return completion.choices[0].message.content
 
 def main():
     # Initialize system once
     rag = RAGSystem()
 
-    while True:
-        try:
-            query = "福莫特罗单日最大总剂量"
-            
-            answer = rag.process_query(query)
-            
-        except KeyboardInterrupt:
-            print("\nOperation cancelled by user.")
-            break
+    try:
+        query = "福莫特罗单日最大总剂量"
+        
+        answer = rag.process_query(query)
 
-        except Exception as e:
-            print(f"\nError processing query: {str(e)}")
-            continue
+        print(answer)
+        
+    except KeyboardInterrupt:
+        print("\nOperation cancelled by user.")
+
+    except Exception as e:
+        print(f"\nError processing query: {str(e)}")
+        #traceback.print_exc()
 
 if __name__ == "__main__":
     main()

@@ -5,7 +5,7 @@ class Config:
     VECTOR_DB_PATH = "./vector_db/"
     LOCAL_DOCS_SEARCH_MAX_RESULTS = 4
     WEB_SEARCH_MAX_RESULTS = 4
-    LLM_MODEL = "deepseek-v3"
+    LLM_MODEL = "deepseek-r1"
 
     os.environ["OPENAI_API_KEY"] = "sk-OBVaImxdTQNZdZbZsiAhlMwmvkvoWSO082HzOYuixVHRCKsE"
     os.environ["OPENAI_BASE_URL"] = "https://svip.xty.app"
