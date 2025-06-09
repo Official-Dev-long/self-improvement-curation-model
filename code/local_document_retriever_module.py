@@ -15,7 +15,7 @@ import glob
 import numpy as np
 
 import os
-os.environ["OPENAI_API_KEY"] = "sk-OBVaImxdTQNZdZbZsiAhlMwmvkvoWSO082HzOYuixVHRCKsE"
+os.environ["OPENAI_API_KEY"] = "sk-xxx"
 os.environ["OPENAI_BASE_URL"] = "https://svip.xty.app/v1"
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
@@ -35,7 +35,7 @@ class LocalDocumentRetrieverModule:
 
     def _get_embedding(self, text: str) -> list:
         client = OpenAI(
-            api_key = "sk-OBVaImxdTQNZdZbZsiAhlMwmvkvoWSO082HzOYuixVHRCKsE",
+            api_key = "sk-xxx",
             base_url = "https://svip.xty.app/v1"
         )
 

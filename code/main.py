@@ -19,7 +19,7 @@ class RAGSystem:
         self.local_retriever = LocalDocumentRetrieverModule()
         #self.web_retriever = OnlineSearchRetrieverModuleBocha()
         self.llm = openai.OpenAI(
-            api_key=os.environ.get("OPENAI_API_KEY", "sk-OBVaImxdTQNZdZbZsiAhlMwmvkvoWSO082HzOYuixVHRCKsE"),
+            api_key=os.environ.get("OPENAI_API_KEY", "sk-xxx"),
             base_url=os.environ.get("OPENAI_BASE_URL", "https://svip.xty.app")
         )
 
