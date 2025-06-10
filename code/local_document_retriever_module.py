@@ -15,7 +15,7 @@ import glob
 import numpy as np
 
 import os
-os.environ["OPENAI_API_KEY"] = "sk-xxx"
+os.environ["OPENAI_API_KEY"] = "sk-OBVaImxdTQNZdZbZsiAhlMwmvkvoWSO082HzOYuixVHRCKsE"
 os.environ["OPENAI_BASE_URL"] = "https://svip.xty.app/v1"
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
@@ -35,7 +35,7 @@ class LocalDocumentRetrieverModule:
 
     def _get_embedding(self, text: str) -> list:
         client = OpenAI(
-            api_key = "sk-xxx",
+            api_key = "sk-OBVaImxdTQNZdZbZsiAhlMwmvkvoWSO082HzOYuixVHRCKsE",
             base_url = "https://svip.xty.app/v1"
         )
 
@@ -73,6 +73,16 @@ class LocalDocumentRetrieverModule:
         return documents
 
     def _initialize_vector_db(self):
+
+        # Check if index exists
+        if os.path.exists(Config.FAISS_INDEX_PATH):
+            print("Loading existing FAISS index...")
+            return FAISS.load_local(
+                folder_path=Config.FAISS_INDEX_PATH,
+                embeddings=DummyEmbedding(),
+                allow_dangerous_deserialization=True  # Necessary for dummy embedding
+            )
+
         documents = self._load_pdfs_from_directory()
 
         text_splitter = RecursiveCharacterTextSplitter(
@@ -107,6 +117,9 @@ class LocalDocumentRetrieverModule:
                                       embedding=dummy_embedding,
                                       metadatas=metadatas
         )
+
+        index.save_local(Config.FAISS_INDEX_PATH)
+        print(f"Saved new FAISS index to {Config.FAISS_INDEX_PATH}")
 
         return index
     
