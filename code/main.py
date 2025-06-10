@@ -1,6 +1,6 @@
 import openai
 from local_document_retriever_module import LocalDocumentRetrieverModule
-#from online_search_retriever_module import OnlineSearchRetrieverModule
+from online_search_retriever_module import OnlineSearchRetrieverModule
 from prompt_formatting_module import PromptFormatter
 from config import Config
 import json
@@ -17,7 +17,7 @@ import traceback
 class RAGSystem:
     def __init__(self):
         self.local_retriever = LocalDocumentRetrieverModule()
-        #self.web_retriever = OnlineSearchRetrieverModuleBocha()
+        self.web_retriever = OnlineSearchRetrieverModule()
         self.llm = openai.OpenAI(
             api_key=os.environ.get("OPENAI_API_KEY", "sk-OBVaImxdTQNZdZbZsiAhlMwmvkvoWSO082HzOYuixVHRCKsE"),
             base_url=os.environ.get("OPENAI_BASE_URL", "https://svip.xty.app")
@@ -30,17 +30,17 @@ class RAGSystem:
         for doc in local_docs:
             print(f"* {doc.page_content} [{doc.metadata}]")
 
-        # web_results = self.web_retriever.search_web(query)
-        # print(f"Found {len(web_results)} web results\n")
-        # print(json.dumps(web_results, indent=2, ensure_ascii=False))
-        ## ensure_ascii=False guarantee chinese characters displayed properly
+        web_results = self.web_retriever.search_web(query)
+        print(f"Found {len(web_results)} web results\n")
+        print(json.dumps(web_results, indent=2, ensure_ascii=False))
+        # ensure_ascii=False guarantee chinese characters displayed properly
 
         print("Synthesizing information...")
 
         prompt = PromptFormatter.format_prompt(
             query=query,
             local_context=[d.page_content for d in local_docs],
-            # web_context=web_results
+            web_context=web_results
         )
         
         # response with RAG

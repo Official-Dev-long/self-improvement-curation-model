@@ -46,6 +46,42 @@ class LocalDocumentRetrieverModule:
 
         return res.data[0].embedding
 
+    def _text_processing(self, text: str) -> str:
+        """Cleans extracted PDF text using OpenAI API"""
+        client = OpenAI(
+            api_key="sk-OBVaImxdTQNZdZbZsiAhlMwmvkvoWSO082HzOYuixVHRCKsE",
+            base_url="https://svip.xty.app/v1"
+        )
+        
+        prompt = f"""
+        Please clean and normalize the following text extracted from a PDF document:
+        
+        {text}
+        
+        Perform these specific actions:
+        1. Remove mysterious blank characters and Unicode artifacts
+        2. Fix wrong encoding issues and garbled characters
+        3. Correct any strange Chinese-English character mixups
+        4. Normalize whitespace (replace multiple spaces with single space)
+        5. Remove any non-printable characters
+        6. Preserve technical code segments exactly as they appear
+        7. Maintain original document structure and formatting
+        
+        Return ONLY the cleaned text without any additional commentary.
+        """
+        
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a professional document cleaning assistant. Clean the text while preserving technical accuracy."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.1,
+            max_tokens=2000
+        )
+        
+        return response.choices[0].message.content.strip()
+
     def _load_pdfs_from_directory(self):
         """Custom PDF loader using PyMuPDF with error handling"""
         documents = []
@@ -59,8 +95,9 @@ class LocalDocumentRetrieverModule:
                         text = page.get_text("text")
                         
                         if text.strip():
+                            cleaned_text = self._text_processing(text)
                             documents.append(Document(
-                                page_content=text,
+                                page_content=cleaned_text,
                                 metadata={
                                     "source": pdf_path,
                                     "page": page_num + 1

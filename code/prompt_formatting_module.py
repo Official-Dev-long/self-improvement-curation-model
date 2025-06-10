@@ -7,16 +7,26 @@ class PromptFormatter:
     def format_prompt(
         query: str,
         local_context: List[str],
+        web_context: List[dict]
     ) -> str:
 
         # Format local_context as you did previously
         formatted_local_context = "\n- ".join(local_context)
+
+        # Format web_context into strings
+        formatted_web_context = "\n- ".join(
+            f"Title: {item.get('title', 'No Title')}\nSnippet: {item.get('snippet', 'No snippet available')}\nURL: {item.get('url', 'No URL')}"
+            for item in web_context
+        )
 
         # Template for the final prompt
         template = """Answer the query using information from these sources:
         
         Local Documents:
         {local_context}
+
+        Web Results:
+        {web_context}
         
         Query: {query}
 
@@ -51,5 +61,6 @@ class PromptFormatter:
         return prompt_template.format(
             query=query,
             local_context=formatted_local_context,
+            web_context=formatted_web_context,
             cur_date=date.today()
         )

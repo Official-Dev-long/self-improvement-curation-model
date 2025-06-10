@@ -1,49 +1,58 @@
-from keyword_extractor import KeywordExtractor 
+from keyword_extractor import KeywordExtractor
 from config import Config
-
-from langchain_community.tools import DuckDuckGoSearchResults
 import json
+import requests
 
 
 class OnlineSearchRetrieverModule:
-    
-    def __init__(self):
-        self.search_tool = DuckDuckGoSearchResults(
-            num_results=Config.WEB_SEARCH_MAX_RESULTS,
-            output_format="json",
-            )
 
+    def __init__(self):
         self.keyword_extractor = KeywordExtractor()
+        self.api_key = Config.GOOGLE_SEARCH_API_KEY
+        self.search_engine_id = Config.GOOGLE_SEARCH_ENGINE_ID
+        self.max_results = Config.WEB_SEARCH_MAX_RESULTS
 
     def search_web(self, query: str) -> list:
         try:
             keywords = self.keyword_extractor.extract_keywords(query)
             search_query = " ".join(keywords)
-            #raw_results = self.search_tool.run(search_query)
-            raw_results = self.search_tool.run(query)
-            #print(raw_results)
-            results = json.loads(raw_results)
-            return self._parse_json_results(results)
+
+            # result = self._perform_google_search(search_query)
+            result = self._perform_google_search(query)
+
+            return result
 
         except Exception as e:
             print(f"Search error: {str(e)}")
             return []
 
-    def _parse_json_results(self, results) -> list:
-        """Parse list of result dictionaries from DuckDuckGo"""
-        parsed = []
+    def _perform_google_search(self, query: str) -> list:
+        url = "https://www.googleapis.com/customsearch/v1"
+        params = {
+            "key": self.api_key,
+            "cx": self.search_engine_id,
+            "q": query,
+            "num": self.max_results
+        }
+        response = requests.get(url, params=params)
 
-        if not results or not isinstance(results, list):
-            print("[DEBUG] Unexpected results format")
-            return parsed
+        if response.status_code != 200:
+            print(f"[ERROR] Google Search API request failed: {response.status_code}, {response.text}")
+            return []
+
+        results = response.json().get("items", [])
+        return self._parse_google_results(results)
+
+    def _parse_google_results(self, results: list) -> list:
+        parsed = []
 
         for item in results:
             parsed.append({
-                'title': item.get('title', 'No Title'),
-                'url': item.get('link', ''),
-                'snippet': item.get('snippet', ''),
-                'category': item.get('category', ''),  
-                'icon': item.get('icon', '')           
+                "title": item.get("title", "No Title"),
+                "url": item.get("link", ""),
+                "snippet": item.get("snippet", ""),
+                "category": "",  # Google doesn't categorize this way
+                "icon": item.get("pagemap", {}).get("cse_thumbnail", [{}])[0].get("src", "")
             })
 
         return parsed
