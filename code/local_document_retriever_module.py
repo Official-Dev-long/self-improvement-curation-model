@@ -10,6 +10,9 @@ from langchain_core.embeddings import Embeddings  # Dummy base class
 import faiss
 from openai import OpenAI
 
+import re
+import unicodedata
+
 import fitz  # PyMuPDF
 import glob
 import numpy as np
@@ -46,45 +49,26 @@ class LocalDocumentRetrieverModule:
 
         return res.data[0].embedding
 
-    def _text_processing(self, text: str) -> str:
-        """Cleans extracted PDF text using OpenAI API"""
-        client = OpenAI(
-            api_key="sk-OBVaImxdTQNZdZbZsiAhlMwmvkvoWSO082HzOYuixVHRCKsE",
-            base_url="https://svip.xty.app/v1"
-        )
+    def _normalize_characters(self, text: str) -> str:
+        """Convert full-width characters to half-width and clean special symbols"""
+        # Convert full-width English letters/digits to standard half-width
+        text = unicodedata.normalize('NFKC', text)
         
-        prompt = f"""
-        Please clean and normalize the following text extracted from a PDF document:
+        # Remove special control characters and symbols
+        text = re.sub(r'[\x00-\x1f]', '', text)  # Control chars
+        text = re.sub(r'[\u200b\u200e\u2028\u2029]', '', text)  # Special whitespace
+        text = re.sub(r'[\ue000-\uf8ff]', ' ', text)  # Private use area
         
-        {text}
+        # Clean remaining artifacts
+        text = re.sub(r'[•●▪]', ' ', text)  # Various bullet characters
+        text = re.sub(r'\s+', ' ', text)  # Collapse multiple spaces
         
-        Perform these specific actions:
-        1. Remove mysterious blank characters and Unicode artifacts
-        2. Fix wrong encoding issues and garbled characters
-        3. Correct any strange Chinese-English character mixups
-        4. Normalize whitespace (replace multiple spaces with single space)
-        5. Remove any non-printable characters
-        6. Preserve technical code segments exactly as they appear
-        7. Maintain original document structure and formatting
-        
-        Return ONLY the cleaned text without any additional commentary.
-        """
-        
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a professional document cleaning assistant. Clean the text while preserving technical accuracy."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.1,
-            max_tokens=2000
-        )
-        
-        return response.choices[0].message.content.strip()
+        return text
 
     def _load_pdfs_from_directory(self):
         """Custom PDF loader using PyMuPDF with error handling"""
-        documents = []
+        #documents = []
+        parsed_documents = []
         pdf_files = glob.glob(os.path.join(Config.DOCS_DIR, "**/*.pdf"), recursive=True)
         
         for pdf_path in pdf_files:
@@ -93,11 +77,49 @@ class LocalDocumentRetrieverModule:
                     for page_num in range(len(doc)):
                         page = doc.load_page(page_num)
                         text = page.get_text("text")
+
+                        # Apply comprehensive character normalization
+                        text = self._normalize_characters(text)
+                        
+                        # Paragraph reconstruction logic
+                        lines = text.split('\n')
+                        cleaned_lines = []
+                        current_paragraph = []
+                        
+                        for line in lines:
+                            stripped = line.strip()
+                            if stripped:
+                                # Chinese sentence terminators
+                                if re.search(r'[。！？…；》\.)\]]$', stripped):
+                                    current_paragraph.append(stripped)
+                                    cleaned_lines.append(" ".join(current_paragraph))
+                                    current_paragraph = []
+                                else:
+                                    current_paragraph.append(stripped)
+                            else:
+                                if current_paragraph:
+                                    cleaned_lines.append(" ".join(current_paragraph))
+                                    current_paragraph = []
+                                cleaned_lines.append("")  # Preserve paragraph break
+                        
+                        if current_paragraph:
+                            cleaned_lines.append(" ".join(current_paragraph))
+                        
+                        text = "\n".join(cleaned_lines)
+                        
+                        # Final cleanup
+                        text = re.sub(r'\n{3,}', '\n\n', text)  # Reduce excessive newlines
+
+                        # Save cleaned page text to file
+                        with open("parsed_text.txt", "a", encoding="utf-8") as parsed_file:
+                            parsed_file.write(f"File: {pdf_path}\n")
+                            parsed_file.write(f"--- PAGE {page_num+1} ---\n")
+                            parsed_file.write(text)
+                            parsed_file.write("\n\n")
                         
                         if text.strip():
-                            cleaned_text = self._text_processing(text)
-                            documents.append(Document(
-                                page_content=cleaned_text,
+                            parsed_documents.append(Document(
+                                page_content=text,
                                 metadata={
                                     "source": pdf_path,
                                     "page": page_num + 1
@@ -107,7 +129,8 @@ class LocalDocumentRetrieverModule:
             except Exception as e:
                 print(f"Error loading PDF {pdf_path}: {str(e)}")
         
-        return documents
+        # return documents
+        return parsed_documents
 
     def _initialize_vector_db(self):
 
@@ -120,11 +143,14 @@ class LocalDocumentRetrieverModule:
                 allow_dangerous_deserialization=True  # Necessary for dummy embedding
             )
 
-        documents = self._load_pdfs_from_directory()
+        # documents = self._load_pdfs_from_directory()
+        parsed_documents = self._load_pdfs_from_directory()
 
+        """
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size = 1000,
-            chunk_overlap=200
+            chunk_overlap=200,
+            separators=["\n\n", "\n", "。", "！", "？", "；", "…"]  # Chinese-aware
         )
 
         splits = text_splitter.split_documents(documents)
@@ -140,6 +166,10 @@ class LocalDocumentRetrieverModule:
 
         texts = [doc.page_content for doc in splits]
         metadatas = [doc.metadata for doc in splits]
+        """
+
+        texts = [doc.page_content for doc in parsed_documents]
+        metadatas = [doc.metadata for doc in parsed_documents]
 
         # Embed all texts
         embeddings = [self._get_embedding(text) for text in texts]

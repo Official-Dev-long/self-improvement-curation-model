@@ -7,7 +7,7 @@ import requests
 class OnlineSearchRetrieverModule:
 
     def __init__(self):
-        self.keyword_extractor = KeywordExtractor()
+        self.keyword_extractor = KeywordExtr0actor()
         self.api_key = Config.GOOGLE_SEARCH_API_KEY
         self.search_engine_id = Config.GOOGLE_SEARCH_ENGINE_ID
         self.max_results = Config.WEB_SEARCH_MAX_RESULTS
